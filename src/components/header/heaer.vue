@@ -25,25 +25,21 @@
         <div class="bulletin-wrapper" @click="showDetail()">
           <span class="icon"></span>
           <div class="text">{{seller.bulletin}}</div>
-          <span class="iconfont">></span>
+          <span class="iconfont icon-keyboard_arrow_right"></span>
         </div>
         <!-- // 这里添加一个背景 -->
         <div class="background">
           <img :src="seller.avatar" alt="" class="bg">
         </div>
         <div v-show="detailShow" class="details" @click="showDetail()">
-            <div class="title">{{seller.name}}</div>
-            <div class="star"></div>
-            <span class="sale-info">优惠信息</span>
-            <div vi-if="seller.supports" class="supports" v-for="item in seller.supports">
-               <span class="icon" :class="classMap[item.type]"></span>
-               <span class="text">{{item.description}}</span>
+            <div class="details-weapper clearFix">
+              <div class="details-main">
+                <h1 class="name">{{seller.name}}</h1>
+              </div>
             </div>
-            <span class="sale-info">商家公告</span>
-            <div class="shop-info">
-              {{seller.bulletin}}
-            </div>
-            <span class="close">X</span>
+            <div class="details-close">
+            <i class="icon-close"></i>
+            </span>
         </div>
         </div>
 </template>
@@ -79,6 +75,7 @@
 
 <style lang="scss">
   @import "../../common/stylus/mixin.scss";
+  @import "../../common/stylus/base.scss";
   .header {
       color: white;
       width: 100%;
@@ -172,8 +169,14 @@
             bottom:14px;
             .count{
               display:inline-block;
+              vertical-align: top;
+            }
+            .iconfont{
+              font-size:24px;
+              display: inline-block;
             }
         }
+
       }
       .bulletin-wrapper{
           line-height: 28px;
@@ -205,7 +208,9 @@
           padding-right:12px;
           padding-left:4px;
           text-align:center;
-          font-size:10px;
+          font-size:20px;
+          margin-top:4px;
+          vertical-align: top;
         }
       }
       .background{
@@ -229,23 +234,34 @@
         top:0;
         left:0;
         bottom:0;
-        filter:blur(10px);
         background:rgba(7,17,27,.8);
         box-sizing:border-box;
-        padding-top:64px;
         overflow:auto;
-        .title{
-          font-size:16px;
-          font-weight:700;
-          color:white;
-          line-height: 32px;
-          margin-bottom:16px;
-          display:block;
-          text-align:center;
+        &-weapper{
+          min-height:100%;
+          width:100%;
+          @extend .clearFix;
+          .details-main{
+            // 向上和向下固定的宽度
+            margin-top:64px;
+            padding-bottom:64px;
+            .name{
+              font-size:16px;
+              font-weight:700;
+              color:white;
+              line-height: 32px;
+              width:100%;
+              text-align:center;
+            }
+          }
         }
-        .star{
-          margin:0 auto;
-
+        .details-close{
+          position: relative;
+          width:32px;
+          height:32px;
+          margin:-64px auto 0 auto;
+          clear:both;
+          font-size:32px;
         }
       }
 
