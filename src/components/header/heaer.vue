@@ -31,20 +31,36 @@
         <div class="background">
           <img :src="seller.avatar" alt="" class="bg">
         </div>
-        <div v-show="detailShow" class="details" @click="showDetail()">
+        <div v-show="detailShow" class="details">
             <div class="details-weapper clearFix">
               <div class="details-main">
                 <h1 class="name">{{seller.name}}</h1>
+                <star class="star" :size="48" :score="seller.score"></star>
+                <h2 class="info">优惠信息</h2>
+                <div class="info-list">
+                    <div v-for="item in seller.supports" class="supports">
+                        <span :class="classMap[item.type]" class="icon"></span>
+                        <span class="text">{{item.description}}</span>
+                    </div>
+                </div>
+                <h2 class="info">商家公告</h2>
+                <div class="content">
+                    {{seller.bulletin}}
+                </div>
               </div>
             </div>
-            <div class="details-close">
-            <i class="icon-close"></i>
+            <div class="details-close" >
+            <i class="icon-close" @click="hideDetail"></i>
             </span>
         </div>
         </div>
 </template>
 
 <script type="text/ecmascript-6">
+
+// 引入star 组件
+import star from '../star/star';
+
   export default {
     props: {
       seller: {
@@ -56,6 +72,7 @@
       // 这里定义一个方法
       this.classMap=["decrease","discount","special","invoice","guarantee"];
     },
+    //注册一个star
     data(){
       return {
         detailShow:false
@@ -66,10 +83,18 @@
       //   this.detailShow=!this.detailShow
       // }
       // 其实也可以采用这一种方法
+      hideDetail(){
+        this.detailShow=false;
+      },
       showDetail(){
+        console.log("zone");
         this.detailShow=true;
+      },
+
+    },
+    components: {
+        star
       }
-    }
 };
 </script>
 
@@ -234,6 +259,7 @@
         top:0;
         left:0;
         bottom:0;
+        z-index:10;
         background:rgba(7,17,27,.8);
         box-sizing:border-box;
         overflow:auto;
@@ -253,6 +279,87 @@
               width:100%;
               text-align:center;
             }
+            .star{
+              text-align:center;
+            }
+            .info{
+              margin:28px 36px 24px 36px;
+              font-size:16px;
+              font-weight: 700;
+              color:white;
+              text-align:center;
+              position:relative;
+              line-height: 16px;
+              &:after{
+                content:"";
+                display:block;
+                width:112px;
+                height:1px;
+                background:rgba(255,255,255,.2);
+                position:absolute;
+                left:0;
+                top:50%;
+                transform:translate3d(0,-50%,0);
+              };
+              &:before{
+                content:"";
+                display:block;
+                width:112px;
+                height:1px;
+                background:rgba(255,255,255,.2);
+                position:absolute;
+                right:0;
+                top:50%;
+                transform:translate3d(0,-50%,0);
+              }
+            }
+            .info-list{
+            padding-left:36px;
+              >div{
+                  width:100%;
+                  margin-bottom:12px;
+                  span{
+                    display:inline-block;
+                    vertical-align:top;
+                  }
+                  .icon{
+                    width:16px;
+                    height:16px;
+                    margin-right:6px;
+                    background-size:16px 16px;
+                    background-repeat:no-repeat;
+                    &.decrease{
+                    @include bg-image('decrease_1');
+                  };
+                    &.discount{
+                    @include bg-image('discount_1');
+                  };
+                    &.invoice{
+                      @include bg-image('invoice_1');
+                    };
+                    &.guarantee{
+                      @include bg-image('guarantee_1');
+                    };
+                    &.special{
+                      @include bg-image('special_1');
+                    }
+                  }
+                  .text{
+                    font-size:12px;
+                    font-weight:200;
+                    line-height: 16px;
+                    color:rgb(255,255,255);
+                  }
+
+              }
+            }
+          }
+          .content{
+            padding:0 48px;
+            font-size:14px;
+            font-weight:200;
+            color:white;
+            line-height:24px;
           }
         }
         .details-close{
