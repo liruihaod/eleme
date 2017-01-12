@@ -31,7 +31,7 @@
         <div class="background">
           <img :src="seller.avatar" alt="" class="bg">
         </div>
-        <div v-show="detailShow" class="details">
+        <div v-show="detailShow" class="details" transition="fade">
             <div class="details-weapper clearFix">
               <div class="details-main">
                 <h1 class="name">{{seller.name}}</h1>
@@ -50,7 +50,7 @@
               </div>
             </div>
             <div class="details-close" >
-            <i class="icon-close" @click="hideDetail"></i>
+            <i class="icon-close" @click="hideDetail()"></i>
             </span>
         </div>
         </div>
@@ -85,10 +85,11 @@ import star from '../star/star';
       // 其实也可以采用这一种方法
       hideDetail(){
         this.detailShow=false;
+        console.log("hide");
       },
       showDetail(){
-        console.log("zone");
         this.detailShow=true;
+        console.log("show");
       },
 
     },
@@ -259,10 +260,19 @@ import star from '../star/star';
         top:0;
         left:0;
         bottom:0;
-        z-index:10;
-        background:rgba(7,17,27,.8);
+        z-index:100;
         box-sizing:border-box;
         overflow:auto;
+        transition:all .5s;
+        backdrop-filter:blur(10px);
+        &.fade-transition{
+          opacity:1;
+          background:rgba(7,17,27,.8);
+        }
+        &.fade-enter,&.fade-leave{
+          opacity:0;
+          background:rgba(7,17,27,0);
+        }
         &-weapper{
           min-height:100%;
           width:100%;
