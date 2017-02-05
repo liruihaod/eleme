@@ -13,7 +13,7 @@
              {{seller.description}}/{{seller.deliveryPrice}}分钟送达
              </div>
              <div vi-if="seller.supports" class="supports">
-                <span class="icon" :class="classMap[seller.supports[0].type]"></span>
+                <span class="icon" :class="classMap[seller.supports[0].type]" track-by="$index" ></span>
                 <span class="text">{{seller.supports[0].description}}</span>
              </div>
            </div>
@@ -38,7 +38,7 @@
                 <star class="star" :size="48" :score="seller.score"></star>
                 <h2 class="info">优惠信息</h2>
                 <div class="info-list">
-                    <div v-for="item in seller.supports" class="supports">
+                    <div v-for="item in seller.supports" class="supports" >
                         <span :class="classMap[item.type]" class="icon"></span>
                         <span class="text">{{item.description}}</span>
                     </div>

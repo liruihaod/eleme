@@ -38,3 +38,4 @@ router.map({
 router.start(app, '#app');
 // 这里定义一个初始的位置
 router.go('/goods');
+

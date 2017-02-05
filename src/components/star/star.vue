@@ -13,7 +13,7 @@
  const CLS_OFF="off";
 
 export default {
-    // 接受一个数组
+    // 接受一个数
     props:{
       size:{
         type:Number
