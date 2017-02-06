@@ -18,10 +18,26 @@
               </div>
             </div>
           </div>
-      </div>
+          <div class="shopcart-list" v-show="shopcartList!=null">
+              <div class="shopcart-list-header">
+                <span>购物车</span>
+                  <a class="empty">清除</a> 
+              </div>
+              <ul class="shopcart-list-ct">
+                <li v-for="item in shopcartList">
+                    <span>{{item.name}}</span>
+                   <div>
+                    <span>{{item.price*item.count}}</span>  
+                      <v-cartcontrol :food="food" class="cartcontrol"></v-cartcontrol>
+                    </div> 
+                </li>  
+              </ul>
+          </div>
+      </div> 
 </template>
 
 <script>
+import cartcontrol from 'components/cartcontrol/cartcontrol.vue';
 export default {
     props:{
       price:{
@@ -31,12 +47,7 @@ export default {
       selectFoods:{
         // 如果是一个函数 这里的default 就是一个空数组
         type:Array
-        // default(){
-        //   return [{
-        //     price:10,
-        //     count:23
-        //   }];
-        // }
+       
       },
       minPrice:{
         type:Number,
@@ -50,7 +61,42 @@ export default {
       }
     },
     created(){
-      console.log(this.deliveryPrice);
+      console.log(this.shopcartList);
+    },
+    data(){
+      return {
+        shopcartList:[{
+          name:"三大赵日22天",
+          count:13,
+          price:14,
+          total:123,
+        },{
+          name:"三大赵日天",
+          count:12,
+          price:"14",
+          total:123,
+        },{
+          name:"三大赵日天",
+          count:3,
+          price:"14",
+          total:123
+        },{
+          name:"三大赵日天",
+          count:5,
+          price:"14",
+          total:123
+        },{
+          name:"三大赵日天",
+          count:1,
+          price:"14",
+          total:123
+        },{
+          name:"三大赵日天",
+          count:1,
+          price:"14",
+          total:123
+        }]
+      }
     },
     computed:{
 
@@ -86,15 +132,20 @@ export default {
           return "zone1";
         }else if(this.minPrice>this.totalPrice&&this.totalPrice>0){
           return "zone2";
-        }else if(this.totalPrice>this.minPrice){
+        }else if(this.totalPrice>=this.minPrice){
           return "zone3";
         } 
       }
+    },
+    components: {
+      'v-cartcontrol':cartcontrol
     }
 }
 </script>
 
 <style lang="scss">
+@import "../../common/stylus/mixin.scss";
+
   .shopcart{
     display:block;
     position:fixed;
@@ -203,6 +254,59 @@ export default {
           background:#00a0dc;
           color:white;
         }
+      }
+    }
+    &-list{
+    position:fixed;
+    bottom:50px;
+    max-height:305px;
+    width:100%;
+    background:white;
+    overflow-y:auto;
+    -webkit-overflow-scrolling: touch;
+      &-header{
+        height:40px;
+        background:#f3f5f7;
+        line-height: 40px;
+        padding:0 18px;
+        border-bottom:2px solid rgba(7,17,27,.1);
+        display:flex;
+        justify-content:space-between;
+        span{
+          display:block;
+          font-size:14px;
+          font-weight:200;
+          color:rgb(7,17,27);
+        }
+        .empty{
+          font-size:12px;
+          color:rgb(0,160,220);
+          line-height: 40px;
+        }
+      }
+      &-ct{
+        padding:0 18px;
+      li{
+        height:48px;
+        @include border-1px(rgba(7,17,27,.1));
+        display:flex;
+        justify-content: space-between;
+        >span{
+          display:block;
+          line-height: 48px;
+          font-size:14px;
+          color:rgb(7,17,27);
+        }
+        div{
+          display:flex;
+          span{
+            display:inline-block;
+            line-height: 48px;
+            margin-right:12px;
+          }
+        }
+      }
+      
       }
     }
   }

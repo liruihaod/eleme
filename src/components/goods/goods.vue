@@ -37,7 +37,6 @@
       </div>
     </dis>
 <v-shopcart :select-foods="selectedFood" :delivery-price="seller.deliveryPrice" :min-price="seller.minPrice"></v-shopcart>
-// 这里的selectedFodd 通过data初始化定义为0
 </template>
 
 <script >
@@ -111,7 +110,7 @@ export default {
       }
       let foodList=this.$els.foodsWrapper.getElementsByClassName('food-list-hook');
       let el=foodList[index].offsetTop;
-      this.foodScroll.scrollTo(0,-el,300);
+      this.foodScroll.scrollTo(0,-el,800);
     }
   },
   computed:{
@@ -150,7 +149,7 @@ export default {
 .goods {
     position: absolute;
     top: 175px;
-    bottom: 46px;
+    bottom: 50px;
     width: 100%;
     display: flex;
     overflow: hidden;
