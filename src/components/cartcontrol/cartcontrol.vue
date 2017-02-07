@@ -33,6 +33,8 @@ export default {
         }else{
           this.food.count++;
         }
+        // 当添加一个商品的时候 执行一个派发事件
+        this.$dispatch('cart.add',event.target);
       },
       reduce(event){
         if(!event._constructed){

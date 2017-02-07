@@ -93,6 +93,9 @@ export default {
         this.scrollY=Math.abs(Math.round(pos.y));
       })
     },
+    _drop(target){
+      
+    }
     _clacHeight(){
       let foodList=this.$els.foodsWrapper.getElementsByClassName('food-list-hook');
       let height=0;
@@ -140,7 +143,11 @@ export default {
   components: {
     'v-shopcart': shopcart,
     'v-cartcontrol': cartcontrol
-
+  },
+  event:{
+    'cart.add'(target){
+      this._drop(target);
+    }
   }
 };
 </script>
