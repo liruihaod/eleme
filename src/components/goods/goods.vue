@@ -36,7 +36,7 @@
         </ul>
       </div>
     </dis>
-<v-shopcart :select-foods="selectedFood" :delivery-price="seller.deliveryPrice" :min-price="seller.minPrice"></v-shopcart>
+<v-shopcart v-ref:shopcart :select-foods="selectedFood" :delivery-price="seller.deliveryPrice" :min-price="seller.minPrice"></v-shopcart>
 </template>
 
 <script >
@@ -65,7 +65,6 @@ export default {
     }
   },
   created() {
-    console.log(this.seller);
     this.classMap = ["decrease", "discount", "special", "invoice", "guarantee"];
     // 通过请求拿到参数
     this.$http.get("/api/goods").then((response) => {
@@ -94,8 +93,11 @@ export default {
       })
     },
     _drop(target){
-      
-    }
+      // 父组件调用子组件的方法
+      this.$nextTick(()=>{
+        this.$refs.shopcart.drop(target);
+      })
+    },
     _clacHeight(){
       let foodList=this.$els.foodsWrapper.getElementsByClassName('food-list-hook');
       let height=0;
@@ -144,7 +146,7 @@ export default {
     'v-shopcart': shopcart,
     'v-cartcontrol': cartcontrol
   },
-  event:{
+  events:{
     'cart.add'(target){
       this._drop(target);
     }

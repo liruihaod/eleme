@@ -1,6 +1,6 @@
 <template lang="html">
       <div class="shopcart">
-          <div class="content">
+          <div class="content" @click="toggle()">
             <div class="content-left">
               <div class="num" v-show="totalCount>0">{{totalCount }}</div>
               <div class="logo-wrapper">
@@ -19,17 +19,17 @@
             </div>
           </div>
           <div class="ball-container">
-            <div v-for="ball in balls" v-show="ball.show" class="ball">
-              <div class="inner"></div>
+            <div  transition="drop" v-for="ball in balls" v-show="ball.show" class="ball">
+              <div class="inner inner-hook"></div>
             </div>
           </div>
-          <div class="shopcart-list" v-show="shopcartList==null">
+          <div class="shopcart-list" v-show="listShow">
               <div class="shopcart-list-header">
                 <span>购物车</span>
-                  <a class="empty">清除</a> 
+                  <a class="empty">清空</a>  
               </div>
               <ul class="shopcart-list-ct">
-                <li v-for="item in shopcartList">
+                <li v-for="item in selectFoods">
                     <span>{{item.name}}</span>
                    <div>
                     <span>¥{{item.price*item.count}}</span>  
@@ -66,46 +66,71 @@
             }
         },
         created() {
-            console.log(this.shopcartList);
         },
-        methods(){
+        transitions:{
+            drop:{
+                beforeEnter(el){
+                    let count=this.balls.length;
+                    while(count--){
+                        // 拿到所有的小球
+                        let ball=this.balls[count];
+                        if(ball.show){
+                            let rect=ball.el.getBoundingClientRect();
+                            let x=rect.left-32;
+                            let y=-(window.innerHeight-rect.top-22);
+                            // 设置初始的位置
+                            el.style.display="";
+                            el.style.webkitTransform=`translate3d(0,${y}px,0)`;
+                            el.style.transform=`translate3d(0,${y}px,0)`;
+                            let inner =el.getElementsByClassName("inner-hook")[0];
+                            inner.style.webkitTransform=`translate3d(${x}px,0,0)`;
+                            inner.style.transform=`translate3d(${x}px,0,0)`;
+                        }
+                    }
+                },
+                enter(el){
+                    //主动去触发浏览器重绘
+                    let rf=el.offestHeight;
+                    this.$nextTick(()=>{
+                         el.style.webkitTransform="translate3d(0,0,0)";
+                            el.style.transform="translate3d(0,0,0)";
+                            let inner =el.getElementsByClassName("inner-hook")[0];
+                            inner.style.webkitTransform="translate3d(0,0,0)";
+                            inner.style.transform="translate3d(0,0,0)";
+                    })
+                },
+                afterEnter(el){
+                    let ball=this.dropBalls.shift();
+                    // 这里如果不存在会返回一个undefined;
+                    if(ball){
+                        ball.show=false;
+                        el.style.display="none";
+                    }
+                } 
+            }
+        },
+        methods:{
           drop(el){
-            
+              // 遍历balls
+              for(let i=0;i<this.balls.length;i++){
+                  let ball=this.balls[i];
+                  if(!ball.show){
+                      ball.show=true;
+                      ball.el=el;
+                      this.dropBalls.push(ball);
+                      return;
+                  }
+              }
+          },
+          toggle(){
+              console.log(this.selectFoods.length);
+              if(this.selectFoods.length>0){
+                  return this.listShow=!this.listShow;
+              }
           }
         },
         data() {
             return {
-                shopcartList: [{
-                    name: "三大赵日22天",
-                    count: 13,
-                    price: 14,
-                    total: 123,
-                }, {
-                    name: "三大赵日天",
-                    count: 12,
-                    price: "14",
-                    total: 123,
-                }, {
-                    name: "三大赵日天",
-                    count: 3,
-                    price: "14",
-                    total: 123
-                }, {
-                    name: "三大赵日天",
-                    count: 5,
-                    price: "14",
-                    total: 123
-                }, {
-                    name: "三大赵日天",
-                    count: 1,
-                    price: "14",
-                    total: 123
-                }, {
-                    name: "三大赵日天",
-                    count: 1,
-                    price: "14",
-                    total: 123
-                }],
                 balls:[{
                   show:false
                   },
@@ -121,7 +146,9 @@
                   {
                     show:false
                   }
-                ]
+                ],
+                dropBalls:[],
+                listShow:false
             }
         },
         computed: {
@@ -284,13 +311,13 @@
               bottom:22px;
               z-index:200;
               &.drop-transition{
-                transition:all .4s;
+                transition: all 0.4s cubic-bezier(0.49,-0.29,0.75,0.41);
                 .inner{
                   width:16px;
                   height:16px;
                   border-radius:50%;
-                  background:blue; 
-                  transition:all .4s;
+                  background:rgb(0,160, 220); 
+                  transition: all 0.4s linear;
                 }
               }
            }
