@@ -25,6 +25,8 @@ export default {
     },
     methods:{
       Addfoods(event){
+        console.log(event);
+        // 这里是防止多次点击。
         if(!event._constructed){
           return;
         }
@@ -35,6 +37,8 @@ export default {
         }
         // 当添加一个商品的时候 执行一个派发事件
         this.$dispatch('cart.add',event.target);
+      },
+      goto(){
       },
       reduce(event){
         if(!event._constructed){
@@ -93,6 +97,7 @@ export default {
       color:rgb(147,153,159);
       text-align:center;
       line-height: 36px;
+      display:inline-block;
     }
     .cart-add{
        padding:6px;

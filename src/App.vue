@@ -50,7 +50,6 @@
 
 <style lang='scss'>
 @import "common/stylus/mixin.scss";
-
         .tab{
           height:40px;
           line-height: 40px;

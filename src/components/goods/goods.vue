@@ -26,7 +26,7 @@
                     <span v-show="items.oldPrice!=''" class="foods-old-price">¥{{items.oldPrice}}</span>
                   </div>
                 <div class="cartcontrol-wrapper">
-                  <v-cartcontrol :food="items"></v-cartcontrol>
+                  <v-cartcontrol v-ref:cartcontrol :food="items"></v-cartcontrol>
                 </div>
                 </div>
               </div>
@@ -98,6 +98,9 @@ export default {
         this.$refs.shopcart.drop(target);
       })
     },
+    _empty(target){
+      this.$refs.cartcontrol.goto(target);
+    },
     _clacHeight(){
       let foodList=this.$els.foodsWrapper.getElementsByClassName('food-list-hook');
       let height=0;
@@ -149,6 +152,9 @@ export default {
   events:{
     'cart.add'(target){
       this._drop(target);
+    },
+    'empty.todo'(target){
+      this._empty(target);
     }
   }
 };

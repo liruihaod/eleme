@@ -1,7 +1,7 @@
 <template lang="html">
       <div class="shopcart">
-          <div class="content" @click="toggle()">
-            <div class="content-left">
+          <div class="content">
+            <div class="content-left"  @click="toggle()">
               <div class="num" v-show="totalCount>0">{{totalCount }}</div>
               <div class="logo-wrapper">
                 <div class="logo" :class="{'on':totalCount>0}">
@@ -23,17 +23,17 @@
               <div class="inner inner-hook"></div>
             </div>
           </div>
-          <div class="shopcart-list" v-show="listShow">
+          <div class="shopcart-list" v-show="listShow" transition="fold">
               <div class="shopcart-list-header">
                 <span>购物车</span>
-                  <a class="empty">清空</a>  
+                  <a class="empty" @click="empty()">清空</a>  
               </div>
               <ul class="shopcart-list-ct">
                 <li v-for="item in selectFoods">
                     <span>{{item.name}}</span>
                    <div>
                     <span>¥{{item.price*item.count}}</span>  
-                      <v-cartcontrol :food="food" class="cartcontrol"></v-cartcontrol>
+                      <v-cartcontrol :food="item" class="cartcontrol"></v-cartcontrol>
                     </div> 
                 </li>  
               </ul>
@@ -123,16 +123,40 @@
               }
           },
           toggle(){
-              console.log(this.selectFoods.length);
               if(this.selectFoods.length>0){
+                  console.log("三大赵日天");
                   return this.listShow=!this.listShow;
               }
+          },
+          empty(){
+              this.selectFoods=[];
+              // 执行一个派发事件
+             this.$dispatch('empty.todo',event.target);
+            return this.listShow=!this.listShow;
           }
         },
         data() {
             return {
                 balls:[{
                   show:false
+                  },
+                  {
+                    show:false
+                  },
+                  {
+                    show:false
+                  },
+                  {
+                    show:false
+                  },
+                  {
+                    show:false
+                  },
+                  {
+                    show:false
+                  },
+                  {
+                    show:false
                   },
                   {
                     show:false
@@ -324,12 +348,22 @@
         }
         &-list {
             position: fixed;
-            bottom: 50px;
+            bottom:0;
+            left:0;
+            z-index:-1;
             max-height: 305px;
             width: 100%;
             background: white;
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
+            &.fold-transition{
+                transition:all .5s;
+                // 这里针对于不定高,我们设置为translate(0,-100%,0);
+                transform:translate3d(0,-50px,0);
+            }
+            &.fold-enter,&.fold-leave{
+                 transform:translate3d(0,0,0);
+            }
             &-header {
                 height: 40px;
                 background: #f3f5f7;
