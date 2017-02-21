@@ -1,35 +1,42 @@
 <template lang="html">
       <div class="cartcontrol">
           <!-- 减小 -->
-          <div class="cart-decrease " v-show="food.count>0" @click="reduce($event)"
+          <div class="cart-decrease " v-show="food.count>0" @click="reduce($event)|debounce 0"
             transition="move">
             <div class="inner icon-remove_circle_outline"></div>
           </div>
           <div  class="cart-count" v-show="food.count>0">
             {{food.count}}
           </div>
-          <div class="cart-add icon-add_circle" @click="Addfoods($event)">
+          <div class="cart-add icon-add_circle" @click="Addfoods($event)|debounce 0">
  
           </div>
       </div>
 </template>
 
 <script>
+
+
 import Vue from "vue";
 export default {
     props:{
       // 这里需要一个依赖food;
       food:{
         type:Object,
+      },
+      total:{
+        type:Number,
       }
+    },
+    data(){
+      return{
+        listShow:false
+      } 
     },
     methods:{
       Addfoods(event){
-        console.log(event);
+        
         // 这里是防止多次点击。
-        if(!event._constructed){
-          return;
-        }
         if(!this.food.count){
           Vue.set(this.food,'count',1);
         }else{
@@ -39,15 +46,30 @@ export default {
         this.$dispatch('cart.add',event.target);
       },
       goto(){
+        console.log("三大赵日天")
       },
       reduce(event){
-        if(!event._constructed){
-          return;
-        }
         if(this.food.count>1){
-          return this.food.count--
+          this.food.count--
+         this.$nextTick(()=>{
+           console.log(this.total);
+            if(this.total==0){
+              
+             this.$dispatch('empty.hide',event.target);
+             console.log(1111)
+          }
+         })
+          return this.food.count;
         }else {
-          return this.food.count=0;
+           this.food.count=0;
+          this.$nextTick(()=>{
+            console.log(this.total);
+          if(this.total==0){
+             this.$dispatch('empty.hide',event.target);
+              console.log(1111)
+          }
+          })
+          return this.food.count;
         }
       }
     },

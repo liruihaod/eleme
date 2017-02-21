@@ -9,9 +9,9 @@
       </div>
       <div class="foods-wrapper" v-el:foods-wrapper>
         <ul>
-          <li v-for="item in goods" class="food-list-hook food-list" >
+          <li  v-for="item in goods" class="food-list-hook food-list" >
               <h3>{{item.name}}</h3>
-              <a  v-for="items in item.foods">
+              <a @click="setFood(items)|debounce 0"  v-for="items in item.foods">
                 <img v-bind:src="items.icon" alt="" class="foods-icon">
                 <div class="foods-info">
                   <h2>  {{items.name}}</h2>
@@ -37,6 +37,7 @@
       </div>
     </dis>
 <v-shopcart v-ref:shopcart :select-foods="selectedFood" :delivery-price="seller.deliveryPrice" :min-price="seller.minPrice"></v-shopcart>
+  <v-food :food="setFoods"></v-food>
 </template>
 
 <script >
@@ -46,6 +47,8 @@ import BScroll from 'better-scroll';
 import shopcart from 'components/shopcart/shopcart.vue';
 // 注入添加列表组件
 import cartcontrol from 'components/cartcontrol/cartcontrol.vue';
+// 注入food组件
+import food from 'components/food/food.vue'; 
 const ERR_OK = 0;
 
 export default {
@@ -101,6 +104,10 @@ export default {
     _empty(target){
       this.$refs.cartcontrol.goto(target);
     },
+    setFood(item) {
+      this.setFoods=item;
+      console.log(this.setFoods.name);
+    },
     _clacHeight(){
       let foodList=this.$els.foodsWrapper.getElementsByClassName('food-list-hook');
       let height=0;
@@ -147,13 +154,15 @@ export default {
   // 引入组件
   components: {
     'v-shopcart': shopcart,
-    'v-cartcontrol': cartcontrol
+    'v-cartcontrol': cartcontrol,
+    'v-food':food
   },
   events:{
     'cart.add'(target){
       this._drop(target);
     },
     'empty.todo'(target){
+      console.log("zone212313")
       this._empty(target);
     }
   }

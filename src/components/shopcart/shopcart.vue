@@ -33,16 +33,22 @@
                     <span>{{item.name}}</span>
                    <div>
                     <span>¥{{item.price*item.count}}</span>  
-                      <v-cartcontrol :food="item" class="cartcontrol"></v-cartcontrol>
+                      <v-cartcontrol   :total="totalPrice" :food="item" class="cartcontrol"></v-cartcontrol>
                     </div> 
                 </li>  
               </ul>
           </div>
       </div> 
+                      <div class="shopcart-list-bg" v-show="listShow"></div>
+
 </template> 
 
 <script>
     import cartcontrol from 'components/cartcontrol/cartcontrol.vue';
+
+    // 注入Better-scroll 组件
+    import BScroll from 'better-scroll';
+
     export default {
         props: {
             price: {
@@ -122,17 +128,20 @@
                   }
               }
           },
+          _hide(){
+              this.listShow=false;
+          },
           toggle(){
               if(this.selectFoods.length>0){
-                  console.log("三大赵日天");
-                  return this.listShow=!this.listShow;
+                  this.listShow=!this.listShow;
+                  return this.listShow;
               }
           },
           empty(){
-              this.selectFoods=[];
-              // 执行一个派发事件
-             this.$dispatch('empty.todo',event.target);
-            return this.listShow=!this.listShow;
+              this.selectFoods.forEach((food)=>{
+                  food.count=0;
+              });
+              return  this.listShow=!this.listShow;
           }
         },
         data() {
@@ -172,7 +181,8 @@
                   }
                 ],
                 dropBalls:[],
-                listShow:false
+                listShow:false,
+                total:0
             }
         },
         computed: {
@@ -216,6 +226,11 @@
         },
         components: {
             'v-cartcontrol': cartcontrol
+        },
+        events:{
+            'empty.hide'(){
+                console.log("asdasdas");
+            }
         }
     }
 </script>
@@ -228,6 +243,7 @@
         left: 0;
         bottom: 0;
         width: 100%;
+        z-index:11;
         .content {
             width: 100%;
             display: flex;
@@ -356,6 +372,17 @@
             background: white;
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
+            &-bg{
+                display:block;
+                position:fixed;
+                width:100%;
+                height:100%;
+                background:rgba(7,17,27,.6);
+              
+               top:0;
+               left:0;
+               z-index:10;
+            }
             &.fold-transition{
                 transition:all .5s;
                 // 这里针对于不定高,我们设置为translate(0,-100%,0);
