@@ -37,7 +37,7 @@
       </div>
     </dis>
 <v-shopcart v-ref:shopcart :select-foods="selectedFood" :delivery-price="seller.deliveryPrice" :min-price="seller.minPrice"></v-shopcart>
-  <v-food :food="setFoods"></v-food>
+  <v-food :food="setFoods" v-ref:food></v-food>
 </template>
 
 <script >
@@ -104,9 +104,12 @@ export default {
     _empty(target){
       this.$refs.cartcontrol.goto(target);
     },
+    foodShow(){
+      
+    },
     setFood(item) {
       this.setFoods=item;
-      console.log(this.setFoods.name);
+         this.$refs.food.show(); 
     },
     _clacHeight(){
       let foodList=this.$els.foodsWrapper.getElementsByClassName('food-list-hook');
@@ -162,7 +165,6 @@ export default {
       this._drop(target);
     },
     'empty.todo'(target){
-      console.log("zone212313")
       this._empty(target);
     }
   }
