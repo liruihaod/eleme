@@ -64,7 +64,8 @@ export default {
       listHeight: [],
       scrollY: 0,
       // 定义select-foods的值
-      selectedFood: {}
+      selectedFood: {},
+      setFoods:{}
     }
   },
   created() {
