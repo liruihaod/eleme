@@ -21,7 +21,7 @@
                 <div class="cartontrol-wrapper">
                     <v-cartcontrol :food="food"></v-cartcontrol>
                 </div>
-                <div transition="fade" @click="addFirst" class="shopcartd" v-show="!food.count||food.count===0">
+                <div transition="fade" @click.stop.prevent="addFirst" class="shopcartd" v-show="!food.count||food.count===0">
                     加入购物车
                 </div>
             </div>
@@ -34,21 +34,7 @@
             </div>
             <div class="food-estimate">
                 <h1>商品评价</h1>
-                <div class="food-estimate-nav">
-                    <a class="all on">全部<span>11</span></a>
-                    <a class="recommend">推荐<span>11</span></a>
-                    <a class="say">吐槽<span>11</span></a>
-                </div>
-                <a class="food-estimate-choose">只看有内容的评价</a>
-                <ul>
-                    <li v-for="item in food.ratings">
-                        <div class="header">
-                            <div>
-                                <span></span> span
-                            </div>
-                        </div>
-                    </li>
-                </ul>
+               <v-ratingselect :ratings="food.ratings" :select-type="selectType" :only-content="onlyContent" :desc="desc"></v-ratingselect>
             </div>
         </div>
     </div>
@@ -58,9 +44,13 @@
     // 这里载入滚动插件
     import BScroll from 'better-scroll';
     import cartcontrol from 'components/cartcontrol/cartcontrol.vue';
+    // 这里引入ratingselect组件
+    import  ratingselect from 'components/ratingselect/ratingselect.vue'
     // 这里引入Vue
     import Vue from 'vue';
-
+    const POSITIVE = 0,
+        NEGATIVE = 1,
+        ALL = 2;
     export default {
         props: {
             food: {
@@ -69,7 +59,14 @@
         },
         data() {
             return {
-                showKey: false
+                showKey: false,
+                selectType:1,
+                onlyContent:true,
+                desc:{
+                    all:"全部",
+                    positive:"推荐",
+                    negative:"吐槽"
+                }
             }
         },
         computed: {
@@ -103,10 +100,25 @@
                 // 给购物车消失添加一个动画。
                 this.$dispatch('cart.add', event.target);
                 Vue.set(this.food, 'count', 1)
+            },
+            _select(type){
+                this.selectType=type;
+            },
+            _change(Boolean){
+                this.onlyContent=Boolean;
             }
         },
         components: {
-            'v-cartcontrol': cartcontrol
+            'v-cartcontrol': cartcontrol,
+            'v-ratingselect':ratingselect
+        },
+        events:{
+            'ratingtype.select'(target){
+                this._select(target);
+            },
+            'content.change'(target){
+                this._change(target);
+            }
         }
     }
 </script>
@@ -232,34 +244,16 @@
            }
        }
        &-estimate{
-           padding:18px;
+            padding-top:18px;
            h1{
-               font-size:14px;
+            font-size:14px;
                font-weight:700;
                color:rgb(7,17,27);
                line-height:14px;
                margin-bottom:8px;
-           }
-           &-nav{
-            a{
-                display:inline-block;
-                padding:12px 10px;
-                font-size:12px;
-                margin-right:1px;
-                span{
-                    font-size:8px;
-                    margin-left:4px;
-                }
-                margin-right:8px;
-                border-radius:4px;
-                &.on{
-                    color:white;
-                    background:rgb(0,160,220);
-                }
-                    color:#aaa;
-                    background:rgba(77,85,93,.2)
-            }
+               padding-left:14px;
            }
        }
+
      }
 </style>

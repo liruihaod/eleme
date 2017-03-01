@@ -1,15 +1,14 @@
 <template lang="html">
       <div class="cartcontrol">
           <!-- 减小 -->
-          <div class="cart-decrease " v-show="food.count>0" @click="reduce($event)|debounce 0"
+          <div class="cart-decrease " v-show="food.count>0" @click.stop.prevent="reduce($event)|debounce 0"
             transition="move">
             <div class="inner icon-remove_circle_outline"></div>
           </div>
           <div  class="cart-count" v-show="food.count>0">
             {{food.count}}
           </div>
-          <div class="cart-add icon-add_circle" @click="Addfoods($event)|debounce 0">
- 
+          <div class="cart-add icon-add_circle" @click.stop.prevent="Addfoods($event)|debounce 0">
           </div>
       </div>
 </template>

@@ -105,9 +105,6 @@ export default {
     _empty(target){
       this.$refs.cartcontrol.goto(target);
     },
-    foodShow(){
-      
-    },
     setFood(item,event) {
       this.setFoods=item;
          this.$refs.food.show(); 
