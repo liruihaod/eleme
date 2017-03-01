@@ -35,7 +35,7 @@ export default {
     },
     methods:{
       Addfoods(event){
-        
+      event.stopPropagation();
         // 这里是防止多次点击。
         if(!this.food.count){
           Vue.set(this.food,'count',1);

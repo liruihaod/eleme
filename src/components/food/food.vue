@@ -1,79 +1,114 @@
 <template>
-    <div v-show="showKey" class="food" transition="move">
-        <div class="food-headerBg">
-            <img :src="food.image" alt="">
-        </div>
-        <div class="food-header bottom">
-            <h1>{{food.name}}</h1>
-            <aside>
-                <span>月售{{food.sellCount}}份</span>
-                <span>好评率{{food.rating}}%</span>
-            </aside>
-            <div class="food-header-main">
-                <div>
-                    <span class="price">¥{{food.price}}</span>
-                    <span class="oldprice" v-show="food.price">¥{{food.price}}</span>
+    <div v-show="showKey" class="food" transition="move" v-el:food>
+        <div>
+            <a class="back icon-arrow_lift" @click="hide()"></a>
+            <div class="food-headerBg">
+                <img :src="food.image" alt="">
+            </div>
+            <div class="food-header bottom">
+                <h1>{{food.name}}</h1>
+                <aside>
+                    <span>月售{{food.sellCount}}份</span>
+                    <span>好评率{{food.rating}}%</span>
+                </aside>
+                <div class="food-header-main">
+                    <div>
+                        <span class="price">¥{{food.price}}</span>
+                        <span class="oldprice" v-show="food.price">¥{{food.price}}</span>
+                    </div>
+
                 </div>
-                <div class="shopcartd">
+                <div class="cartontrol-wrapper">
+                    <v-cartcontrol :food="food"></v-cartcontrol>
+                </div>
+                <div transition="fade" @click="addFirst" class="shopcartd" v-show="!food.count||food.count===0">
                     加入购物车
                 </div>
             </div>
-        </div>
+
             <div class="food-referral bottom" v-show="food.info">
                 <h1>商品介绍</h1>
                 <p>
                     {{food.info}}
-                </p> 
+                </p>
             </div>
             <div class="food-estimate">
                 <h1>商品评价</h1>
                 <div class="food-estimate-nav">
                     <a class="all on">全部<span>11</span></a>
-                    <a class="recommend">推荐<span>11</span></a> 
-                    <a class="say">吐槽<span>11</span></a>  
+                    <a class="recommend">推荐<span>11</span></a>
+                    <a class="say">吐槽<span>11</span></a>
                 </div>
                 <a class="food-estimate-choose">只看有内容的评价</a>
                 <ul>
-                    <li  v-for="item in food.ratings">
+                    <li v-for="item in food.ratings">
                         <div class="header">
                             <div>
-                                <span>{{time(food.rateTime)}}</span>
-                                span
+                                <span></span> span
                             </div>
                         </div>
                     </li>
                 </ul>
             </div>
         </div>
+    </div>
 </template>
 
 <script>
-export default {
-    props:{
-        food:{
-            type:Object
-        }
-    },
-    data(){
-        return {
-            showKey:false
-        }
-    },
-    computed:{
-        time(time){
-            let now=new Date(time),
-                y=now.getFullYear(),
-                m=now.getMoon(),
-                d=now.getDate();
+    // 这里载入滚动插件
+    import BScroll from 'better-scroll';
+    import cartcontrol from 'components/cartcontrol/cartcontrol.vue';
+    // 这里引入Vue
+    import Vue from 'vue';
+
+    export default {
+        props: {
+            food: {
+                type: Object
+            }
+        },
+        data() {
+            return {
+                showKey: false
+            }
+        },
+        computed: {
+            time(time) {
+                let now = new Date(time),
+                    y = now.getFullYear(),
+                    m = now.getMonth(),
+                    d = now.getDate();
                 return y + "-" + (m < 10 ? "0" + m : m) + "-" + (d < 10 ? "0" + d : d);
-        }
-    },
-    methods:{
-        show(){
-            this.showKey=true;
+            }
+        },
+        methods: {
+            show() {
+                this.showKey = true;
+                this.$nextTick(() => {
+                    if (!this.foodS) {
+                        this.foodS = new BScroll(this.$els.food, {
+                            click: true
+                        })
+                    }
+                });
+            },
+            hide() {
+                this.showKey =false;
+            },
+            addFirst(event) {
+                // 这里防止pc多次点击
+                if (!event._constructed) {
+                    return;
+                }
+                // 给购物车消失添加一个动画。
+                this.$dispatch('cart.add', event.target);
+                Vue.set(this.food, 'count', 1)
+            }
+        },
+        components: {
+            'v-cartcontrol': cartcontrol
         }
     }
-}
 </script>
 
 <style lang='scss'>
@@ -91,7 +126,6 @@ export default {
         z-index:5;
         width:100%;
         background:white;
-        overflow:auto;
         &.move-transition{
             transform:translate3d(0,0,0);
             transition:all .2s linear;
@@ -107,7 +141,15 @@ export default {
                height:375px;
            }
        }
+       .back{
+         font-size: 16px;
+        position: fixed;
+        top: 10px;
+        left: 10px;
+        color: white;
+       }
        &-header{
+           position:relative;
            padding:18px;
            background:white;
            h1{
@@ -146,7 +188,17 @@ export default {
                    line-height: 24px; 
                    text-decoration:line-through;
                }
-               .shopcartd{
+
+
+           }
+       }
+       .cartontrol-wrapper{
+           display:block;
+           position:absolute;
+           bottom:13px;
+           right:12px;
+       }
+        .shopcartd{
                    width:84px;
                    color:white;
                    background:rgb(0,160,220);
@@ -155,10 +207,17 @@ export default {
                    border-radius:12px;
                    text-align:center;
                    font-size:10px;
+                   position:absolute;
+                   bottom:18px;
+                   right:12px;
+                   &.fade-transition{
+                       transition:all .5s linear;
+                       opacity:1;
+                   }
+                   &.fade-enter,&.fade-leave{
+                       opacity:0;
+                   }
                }
-
-           }
-       }
        &-referral{
            padding:18px;
            h1{

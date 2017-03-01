@@ -11,12 +11,12 @@
         <ul>
           <li  v-for="item in goods" class="food-list-hook food-list" >
               <h3>{{item.name}}</h3>
-              <a @click="setFood(items)|debounce 0"  v-for="items in item.foods">
-                <img v-bind:src="items.icon" alt="" class="foods-icon">
+              <a  @click="setFood(items)|debounce 0" v-for="items in item.foods">
+                <img   v-bind:src="items.icon" alt="" class="foods-icon">
                 <div class="foods-info">
-                  <h2>  {{items.name}}</h2>
+                  <h2  >  {{items.name}}</h2>
                   <span  v-show="items.description!=''" class="description">{{items.description}}</span>
-                  <div class="foods-info-evaluate">
+                  <div  class="foods-info-evaluate">
                     <span>月售{{items.sellCount}}份</span>
                     <span>好评率{{items.rating}}%</span>
                   </div>
@@ -108,7 +108,7 @@ export default {
     foodShow(){
       
     },
-    setFood(item) {
+    setFood(item,event) {
       this.setFoods=item;
          this.$refs.food.show(); 
     },
