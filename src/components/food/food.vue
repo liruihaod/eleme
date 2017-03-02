@@ -34,7 +34,31 @@
             </div>
             <div class="food-estimate">
                 <h1>商品评价</h1>
-               <v-ratingselect :ratings="food.ratings" :select-type="selectType" :only-content="onlyContent" :desc="desc"></v-ratingselect>
+                <v-ratingselect :ratings="food.ratings" :select-type="selectType" :only-content="onlyContent" :desc="desc"></v-ratingselect>
+            </div>
+            <div class="rating-wrapper">
+                <!--存在数据的时候-->
+                <ul v-show="food.ratings&&food.ratings.length">
+                    <li v-show="neddShow(rating.rateType,rating.text)" v-for="rating in food.ratings" class="rating-item border-1px">
+                        <div class="rating-header">
+                            <div class="time">
+                                {{rating.rateTime}}
+                            </div>
+                            <div class="right">
+                                <span class="username">{{rating.username}}</span>
+                                <img class="avatar" :src="rating.avatar" alt="头像">
+                            </div>
+
+                        </div>
+                        <div class="text">
+                            <p><span :class="{'icon-thumb_down':rating.rateType===0},{'icon-thumb_up':rating.rateType===1}"></span>{{rating.text}}</p>
+                        </div>
+                    </li>
+                </ul>
+                <!--不存在数据的时候 -->
+                <div v-show="!food.ratings||!food.ratings.length">
+                    暂无数据
+                </div>
             </div>
         </div>
     </div>
@@ -45,7 +69,7 @@
     import BScroll from 'better-scroll';
     import cartcontrol from 'components/cartcontrol/cartcontrol.vue';
     // 这里引入ratingselect组件
-    import  ratingselect from 'components/ratingselect/ratingselect.vue'
+    import ratingselect from 'components/ratingselect/ratingselect.vue'
     // 这里引入Vue
     import Vue from 'vue';
     const POSITIVE = 0,
@@ -60,12 +84,12 @@
         data() {
             return {
                 showKey: false,
-                selectType:1,
-                onlyContent:true,
-                desc:{
-                    all:"全部",
-                    positive:"推荐",
-                    negative:"吐槽"
+                selectType: NEGATIVE,
+                onlyContent: false,
+                desc: {
+                    all: "全部",
+                    positive: "推荐",
+                    negative: "吐槽"
                 }
             }
         },
@@ -89,8 +113,21 @@
                     }
                 });
             },
+            needShow(type,text){
+                // 当 只看内容的情况下，且评论没有内容
+                if(this.onlyContent && !text){
+                    return false;
+                }
+                // 显示展开全部
+                if(this.selecType===ALL){
+                    return true;
+                }else {
+                    // 如果不是暂开全部,则是什么类型就展示什么类型。
+                    return type === this.selectType;
+                }
+            },
             hide() {
-                this.showKey =false;
+                this.showKey = false;
             },
             addFirst(event) {
                 // 这里防止pc多次点击
@@ -101,22 +138,22 @@
                 this.$dispatch('cart.add', event.target);
                 Vue.set(this.food, 'count', 1)
             },
-            _select(type){
-                this.selectType=type;
+            _select(type) {
+                this.selectType = type;
             },
-            _change(Boolean){
-                this.onlyContent=Boolean;
+            _change(Boolean) {
+                this.onlyContent = Boolean;
             }
         },
         components: {
             'v-cartcontrol': cartcontrol,
-            'v-ratingselect':ratingselect
+            'v-ratingselect': ratingselect
         },
-        events:{
-            'ratingtype.select'(target){
+        events: {
+            'ratingtype.select'(target) {
                 this._select(target);
             },
-            'content.change'(target){
+            'content.change'(target) {
                 this._change(target);
             }
         }
@@ -124,6 +161,7 @@
 </script>
 
 <style lang='scss'>
+@import "../../common/stylus/mixin.scss";
     .bottom{
         margin-bottom:18px;
         box-shadow:0px 1px 0px rgba(7,17,27,.1),
@@ -254,6 +292,50 @@
                padding-left:14px;
            }
        }
+       .rating-wrapper{
+        ul{
+            li{
+                 padding:18px;
+                 @include border-1px(rgba(7,17,27,.1));
+                 .rating-header{
+                     display:flex;
+                     justify-content: space-between;
+                     .right{
+                         span{
+                             display:inline-block;
+                             font-size:10px;
+                             color:rgb(147,153,159);
+                             line-height:12px;
+                             margin-right:6px;
+                         }
+                         .avatar{
+                             width:12px;
+                             height:12px;
+                             display:inline-block;
+                         }
 
+                     }
+                 }
+                 .text{
+                     padding:6px 0 16px 0;
+                     p{
+                         font-size:12px;
+                         color:rgb(7,17,27);
+                         line-height:16px;
+                        span{
+                         font-size:12px;
+                         color:rgb(147,153,159);
+                         line-height:24px;
+                         margin-right:4px;
+                         &.icon-thumb_up{
+                             color:rgb(0,160,220);
+                         }
+                        }
+                     }
+                     
+                 }
+            }
+        }
+       }
      }
 </style>
