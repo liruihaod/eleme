@@ -51,21 +51,16 @@ export default {
         if(this.food.count>1){
           this.food.count--
          this.$nextTick(()=>{
-           console.log(this.total);
             if(this.total==0){
-              
              this.$dispatch('empty.hide',event.target);
-             console.log(1111)
           }
          })
           return this.food.count;
         }else {
            this.food.count=0;
           this.$nextTick(()=>{
-            console.log(this.total);
           if(this.total==0){
              this.$dispatch('empty.hide',event.target);
-              console.log(1111)
           }
           })
           return this.food.count;

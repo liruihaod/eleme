@@ -16,7 +16,6 @@
                         <span class="price">¥{{food.price}}</span>
                         <span class="oldprice" v-show="food.price">¥{{food.price}}</span>
                     </div>
-
                 </div>
                 <div class="cartontrol-wrapper">
                     <v-cartcontrol :food="food"></v-cartcontrol>
@@ -39,10 +38,10 @@
             <div class="rating-wrapper">
                 <!--存在数据的时候-->
                 <ul v-show="food.ratings&&food.ratings.length">
-                    <li v-show="neddShow(rating.rateType,rating.text)" v-for="rating in food.ratings" class="rating-item border-1px">
+                    <li v-show="needShow(rating.rateType,rating.text)" v-for="rating in food.ratings" class="rating-item border-1px">
                         <div class="rating-header">
                             <div class="time">
-                                {{rating.rateTime}}
+                                {{rating.rateTime| formatDate}}
                             </div>
                             <div class="right">
                                 <span class="username">{{rating.username}}</span>
@@ -69,8 +68,9 @@
     import BScroll from 'better-scroll';
     import cartcontrol from 'components/cartcontrol/cartcontrol.vue';
     // 这里引入ratingselect组件
-    import ratingselect from 'components/ratingselect/ratingselect.vue'
+    import ratingselect from 'components/ratingselect/ratingselect.vue';
     // 这里引入Vue
+    import {formatDate} from 'common/js/date';
     import Vue from 'vue';
     const POSITIVE = 0,
         NEGATIVE = 1,
@@ -140,14 +140,26 @@
             },
             _select(type) {
                 this.selectType = type;
+                this.$nextTick(()=>{
+                    this.foodS.refresh();
+                })
             },
             _change(Boolean) {
                 this.onlyContent = Boolean;
+                this.$nextTick(()=>{
+                    this.foodS.refresh();
+                })
             }
         },
         components: {
             'v-cartcontrol': cartcontrol,
             'v-ratingselect': ratingselect
+        },
+        filters:{
+            formatDate(time){
+                let date=new Date(time);
+                return formatDate(date,'yyyy-MM-dd hh:mm');
+            }
         },
         events: {
             'ratingtype.select'(target) {
