@@ -1,5 +1,5 @@
 <template lang="html">
-    <div>I am seller</div>
+    <div>I am 123123123</div>
 </template>
 
 <script>
