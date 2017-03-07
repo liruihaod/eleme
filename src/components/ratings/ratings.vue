@@ -24,10 +24,10 @@
                               </div>
                         </div>
                   </div>
-                  <ratingselect :ratings="this.ratings" :select-type="selectType" :only-content="onlyContent" :desc="desc"></ratingselect>
+                  <ratingselect :ratings="ratings" :select-type="selectType" :only-content="onlyContent" :desc="desc"></ratingselect>
                   <!--数据展示 -->
                   <ul class="ratings-ul">
-                        <li v-for="item in ratings">
+                        <li v-show="needShow(item.rateType,item.text)" v-for="item in ratings">
                               <div class="ratings-ul-header">
                                     <img :src="item.avatar" alt="" width="28px" height="28px">
                                     <div class="header-main">
@@ -35,7 +35,7 @@
                                                 <span>{{item.username}}</span>
                                                 <div>
                                                       <star :size="24" :score="item.score"></star>
-                                                      <em>{{item.deliveryTime}}分钟到达</em>
+                                                      <em v-show="item.deliveryTime">{{item.deliveryTime}}分钟到达</em>
                                                 </div>
                                           </div>
                                           <time>{{item.rateTime | formatDate}}</time>
@@ -66,7 +66,9 @@
       import ratingselect from 'components/ratingselect/ratingselect.vue';
       import { formatDate } from 'common/js/date';
       const ERR_OK = 0;
-      const ALL=2;
+          const POSITIVE = 0,
+        NEGATIVE = 1,
+        ALL = 2;
       export default {
             props: {
             },
@@ -78,9 +80,9 @@
                   return {
                         good: [],
                         ratings: [],
-                        showFlag:false,
-                        selectType:ALL,
-                        onlyContent:true
+                        showFlag: false,
+                        selecType: ALL,
+                        onlyContent: true
                   }
             },
             filters: {
@@ -88,6 +90,34 @@
                         let date = new Date(time);
                         return formatDate(date, 'yyyy-MM-dd hh:mm');
                   }
+            },
+            methods: {
+                  needShow(type, text) {
+                        // 当 只看内容的情况下，且评论没有内容
+                        if (this.onlyContent && !text) {
+                              return false;
+                        }
+                        // 显示展开全部
+                        if (this.selecType === ALL) {
+                              return true;
+                        } else {
+                              // 如果不是暂开全部,则是什么类型就展示什么类型。
+                              return type === this.selectType;
+                        }
+                  },
+                  _select(type) {
+                        this.selectType = type;
+                        this.$nextTick(() => {
+                              this.scroll.refresh();
+                        })
+                  },
+                  _change(Boolean) {
+                        this.onlyContent = Boolean;
+                        this.$nextTick(() => {
+                              this.scroll.refresh();
+                        })
+                  }
+
             },
             created() {
                   this.$http.get("/api/seller").then((response) => {
@@ -97,15 +127,22 @@
                   this.$http.get("/api/ratings").then((response) => {
                         response = response.body.date;
                         this.ratings = response;
-                  });
-                  this.$nextTick(() => {
-                        if (!this.ratings) {
-                              this.ratings = new BScroll(this.$els.ratings, {
+                        this.$nextTick(() => {
+                              this.scroll = new BScroll(this.$els.ratings, {
                                     click: true
                               })
-                              console.log("zone");
-                        }
-                  })
+                        })
+
+                  });
+
+            },
+            events: {
+                  'ratingtype.select'(target) {
+                        this._select(target);
+                  },
+                  'content.change'(target) {
+                        this._change(target);
+                  }
             }
       }
 </script>
@@ -125,6 +162,7 @@
             bottom:0;
             width:100%;
             overflow:hidden;
+            z-index:110;
       }
       &-header{
             display:flex;
@@ -239,6 +277,7 @@
                   .ratings-label{
                         margin-left:40px;
                         display:flex;
+              
                         >span{
                               font-size:12px;
                               color:rgb(0,160,220);
@@ -248,7 +287,10 @@
                         }
                         ul{
                               display:flex;
+                                        width:80%;
+                        flex-wrap:wrap;
                               li{
+                                    margin-bottom:10px;
                                     font-size:9px;
                                     color:rgb(148,153,159);
                                     line-height:16px;

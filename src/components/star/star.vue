@@ -43,7 +43,6 @@ export default {
             result.push(CLS_OFF);
           }
           // 最后返回这个数字
-          console.log(result);
           return result;
         }
       }
