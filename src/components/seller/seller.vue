@@ -41,16 +41,16 @@
             </div>
             <ul class="seller-wrapper-list bottom">
                 <li v-for="item in seller.supports">
-                    <img src="" alt="">
+                    <span :class="classMap[item.type]" class=" icon"></span>
                     <p>{{item.description}}</p>
                 </li>
             </ul>
             <div class="seller-wrapper-pics bottom" >
                 <h3>商家实景</h3>
                 <div v-el:img>
-                    <div >
+                   <div v-el:pic-list>
                     <img :src="item" alt="" v-for="item in seller.pics">
-                    </div>
+                   </div>
                 </div>
             </div>
             <div class="seller-wrapper-info">
@@ -85,20 +85,57 @@
             'v-food': food
         },
         created() {
-            this.$nextTick(() => {
-                this.scroll = new BScroll(this.$els.zone, {
+           this.classMap=["decrease","discount","special","invoice","guarantee"];
+        },
+        methods:{
+            _initScroll(){
+                if(!this.scroll){
+                    this.scroll = new BScroll(this.$els.zone, {
                     click: true
+                    })
+                 }else{
+                     this.scroll.refresh();
+                 }
+            },
+            _initImg(){
+                 if(this.seller.pics){
+                // 先计算容器的宽度
+                let picWidth=120,
+                    margin=6,
+                    width=(picWidth+margin)*this.seller.pics.length-margin;
+                this.$els.picList.style.width=width+"px";
+                console.log(width);
+                // 异步执行方法
+                this.$nextTick(()=>{
+                    this.img=new BScroll(this.$els.img,{
+                           scrollX:true,
+                    eventpassthrough:'vertical'
+                    })
                 })
-                this.zone = new BScroll(this.$els.img,{
-                    click:true,
-                    scrollY:false
-                })
-            })
+             }else{
+                 this.img.refresh();
+             }
+            }
+        },
+        watch:{
+            'seller'(){
+                this._initScroll();
+            },
+            'seller.pics'(){
+                this._initImg();
+            }
+        },
+        ready(){
+            this._initScroll();
+            // 先判断是否加载了图片
+           this._intiImg();
         }
     }
 </script>
 
 <style lang="scss">
+  @import "../../common/stylus/mixin.scss";
+  @import "../../common/stylus/base.scss";
     .bottom{
         margin-bottom:18px;
         box-shadow:0px 1px 0px rgba(7,17,27,.1),
@@ -136,7 +173,7 @@
                                 line-height:18px;
                                 :nth-of-type(1){
                                     margin-left:8px;
-                                    magrin-right:12px;
+                                    margin-right:12px;
                                 }
                                 vertical-align: top;
                             }
@@ -214,11 +251,27 @@
                 li{
                     padding:16px 12px;
                     border-top:1px solid rgba(7,17,27,.1);
-                    img{
+                    >span{
                         display:inline-block;
                         width:16px;
                         height:16px;
+                        background-size:16px;
                         margin-right:6px;
+                           &.decrease{
+            @include bg-image('decrease_3');
+          };
+            &.discount{
+            @include bg-image('discount_3');
+          };
+            &.invoice{
+              @include bg-image('invoice_3');
+            };
+            &.guarantee{
+              @include bg-image('guarantee_3');
+            };
+            &.special{
+              @include bg-image('special_3');
+            }
                     }
                     p{
                         display:inline-block;
@@ -241,15 +294,23 @@
                     font-weight:400;
                 }
                 >div{
-                    div{
-                        display:flex;
+                    width:100%;
+                    box-sizing:border-box;
+                    overflow:hidden;
+                    white-space:nowrap;
                     padding:12px 0 18px 18px;
-                    img{
+                  div{
+                        font-size:0;
+                        img{
                         width:120px;
                         height:90px;
                         margin-right:6px;
+                        display:inline-block;
+                        &:last-child{
+                            margin-right:0;
+                        }
                     }
-                    }
+                  }
                 }
             }
             &-info{
