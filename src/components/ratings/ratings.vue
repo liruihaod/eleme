@@ -162,7 +162,6 @@
             bottom:0;
             width:100%;
             overflow:hidden;
-            z-index:110;
       }
       &-header{
             display:flex;

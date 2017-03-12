@@ -12,9 +12,9 @@
                         </div>
                     </div>
                     <div class="seller-right">
-                        <span class="icon-favorite"></span>
+                        <span class="icon-favorite" @click="clickStar()" :class="{'on':collet}"></span>
                         <em class="selelr-right-tips">
-                            已收藏
+                            {{favoriteText}}
                         </em>
                     </div>
                 </div>
@@ -45,12 +45,12 @@
                     <p>{{item.description}}</p>
                 </li>
             </ul>
-            <div class="seller-wrapper-pics bottom" >
+            <div class="seller-wrapper-pics bottom">
                 <h3>商家实景</h3>
                 <div v-el:img>
-                   <div v-el:pic-list>
-                    <img :src="item" alt="" v-for="item in seller.pics">
-                   </div>
+                    <div v-el:pic-list>
+                        <img :src="item" alt="" v-for="item in seller.pics">
+                    </div>
                 </div>
             </div>
             <div class="seller-wrapper-info">
@@ -84,51 +84,65 @@
             'v-shopcart': shopcart,
             'v-food': food
         },
-        created() {
-           this.classMap=["decrease","discount","special","invoice","guarantee"];
-        },
-        methods:{
-            _initScroll(){
-                if(!this.scroll){
-                    this.scroll = new BScroll(this.$els.zone, {
-                    click: true
-                    })
-                 }else{
-                     this.scroll.refresh();
-                 }
-            },
-            _initImg(){
-                 if(this.seller.pics){
-                // 先计算容器的宽度
-                let picWidth=120,
-                    margin=6,
-                    width=(picWidth+margin)*this.seller.pics.length-margin;
-                this.$els.picList.style.width=width+"px";
-                console.log(width);
-                // 异步执行方法
-                this.$nextTick(()=>{
-                    this.img=new BScroll(this.$els.img,{
-                           scrollX:true,
-                    eventpassthrough:'vertical'
-                    })
-                })
-             }else{
-                 this.img.refresh();
-             }
+        data(){
+            return{
+                collet:false
             }
         },
-        watch:{
-            'seller'(){
+        created() {
+            this.classMap = ["decrease", "discount", "special", "invoice", "guarantee"];
+        },
+        computed: {
+            favoriteText(){
+                return this.collet ? "已收藏":"收藏";
+            }  
+        },
+        methods: {
+            clickStar(){
+                this.collet=!this.collet;
+            },
+            _initScroll() {
+                if (!this.scroll) {
+                    this.scroll = new BScroll(this.$els.zone, {
+                        click: true
+                    })
+                } else {
+                    this.scroll.refresh();
+                }
+            },
+            _initImg() {
+                if (this.seller.pics) {
+                    // 先计算容器的宽度
+                    let picWidth = 120,
+                        margin = 6,
+                        width = (picWidth + margin) * this.seller.pics.length - margin;
+                    this.$els.picList.style.width = width + "px";
+                    // 异步执行方法
+                   if(!this.img){
+                        this.$nextTick(() => {
+                        this.img = new BScroll(this.$els.img, {
+                            scrollX: true,
+                            eventpassthrough: 'vertical'
+                        })
+                    })
+                   }
+                } else {
+                    this.img.refresh();
+                }
+            }
+        },
+        watch: {
+            'seller'() {
                 this._initScroll();
             },
-            'seller.pics'(){
+            'seller.pics'() {
                 this._initImg();
             }
         },
-        ready(){
+        ready() {
             this._initScroll();
             // 先判断是否加载了图片
-           this._intiImg();
+            this._initImg();
         }
     }
 </script>
@@ -183,11 +197,18 @@
                        text-align:center;
                        span{
                            font-size:24px;
-                       color:rgb(240,20,20);
+                       color:#aaa;
                        line-height:24px;
                        display:block;
+                       width:50px;
+                       text-align:center;
+                       &.on{
+                            color:rgb(240,20,20);
+                       }
                        }
                        em{
+                           width:50px;
+                       text-align:center;
                            font-style:normal;
                            font-size:10px;
                            color:rgb(77,85,93);

@@ -7,14 +7,14 @@
         <a v-link="{path:'/goods'}">商品</a>
       </div>
       <div class="tab-itme">
-        <a v-link="{path:'/ratings'}">评论</a>
+        <a v-link="{path:'/ratings'}" >评论</a>
       </div>
       <div class="tab-itme">
-        <a v-link="{path:'/seller'}">商家</a>
+        <a v-link="{path:'/seller'}" >商家</a>
       </div>
     </div>
     <!-- 在这里展示内容 -->
-    <router-view :seller="seller"></router-view>
+    <router-view :seller="seller" keep-alive></router-view>
   </div>
 </template>
 
